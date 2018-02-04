@@ -23,10 +23,10 @@ char	*concatenate(char *str, char *buf, unsigned long size)
 		i++;
 		j++;
 	}
-	//ft_putstr(tmp);
 	return (tmp);
 }
 
+// line is the string we read, minus the terminating \n
 int		get_next_line(const int fd, char **line)
 {
 	char	buf[BUFF_SIZE];
@@ -35,6 +35,10 @@ int		get_next_line(const int fd, char **line)
 	unsigned long		size;
 	int		i;
 
+	ft_putstr(*line);
+	ft_putchar('\n');
+	if (BUFF_SIZE < 1)
+		return (-1);
 	(void)line;
 	str = NULL;
 	size = 0;
@@ -47,7 +51,6 @@ int		get_next_line(const int fd, char **line)
 		//if ((str = (char*)malloc(sizeof(char *) * (size + 1))) == NULL)
 		//	return (0);
 		str = concatenate(str, buf, size);
-		//ft_putstr(str);
 		if (buf[i - 1] == '\n')
 			break;
 	}
@@ -58,12 +61,13 @@ int		get_next_line(const int fd, char **line)
 int		main(int argc, char **argv)
 {
 	int		fd;
-	char	*buf;
+	char	**line;
 
 	(void)argc;
-	buf = NULL;
+	line = malloc(sizeof(char **) * 7);
+	*line = "hello!";
 	if ((fd = open(argv[1], O_RDONLY)) == -1)
 		return (0);
-	get_next_line(fd, 0);
+	get_next_line(fd, line);
 	return (0);
 }
