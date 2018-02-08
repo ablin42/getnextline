@@ -35,8 +35,6 @@ int		get_next_line(const int fd, char **line)
 	unsigned long		size;
 	int		i;
 
-	ft_putstr(*line);
-	ft_putchar('\n');
 	if (BUFF_SIZE < 1)
 		return (-1);
 	(void)line;
@@ -54,7 +52,11 @@ int		get_next_line(const int fd, char **line)
 		if (buf[i - 1] == '\n')
 			break;
 	}
-	ft_putstr(str);
+	ft_putstr(*line);
+	*line = str;
+	ft_putstr(*line);
+	if (strcmp(*line,"lorem ipsum dolor\n") == 0)
+		get_next_line(fd, line);
 	return (1);
 }
 
@@ -64,8 +66,8 @@ int		main(int argc, char **argv)
 	char	**line;
 
 	(void)argc;
-	line = malloc(sizeof(char **) * 7);
-	*line = "hello!";
+	line = malloc(sizeof(char **) * 8);
+	*line = "hello!\n";
 	if ((fd = open(argv[1], O_RDONLY)) == -1)
 		return (0);
 	get_next_line(fd, line);
