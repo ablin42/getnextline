@@ -19,7 +19,7 @@ char	*concatenate(char *str, char *buf, unsigned long size)
 			i++;
 		}
 	}
-	//printf("[%s]{%s}\n", tmp, str);
+	//printf("[%s]{%s}(%s)\n", tmp, str, buf);
 	while (i < size && buf[j] != '\n')
 	{
 		tmp[i] = buf[j];
@@ -38,6 +38,8 @@ int		get_next_line(const int fd, char **line)
 	unsigned long		size;
 	int		i;
 
+	size = 0;
+	i = 0;
 	if (BUFF_SIZE < 1)
 		return (-1);
 	if (str != NULL)
@@ -45,10 +47,7 @@ int		get_next_line(const int fd, char **line)
 		*line = concatenate(str, NULL, ft_strlen(str));
 		size = ft_strlen(str);
 	}
-	else
-		size = 0;
-	i = 0;
-	if (str != NULL && ft_strchr(str, '\n') != '\0')
+	if (str != NULL && ft_strchr(str, '\n') != '\0')//
 	{
 		while (str[i] != '\n')
 		{
@@ -61,22 +60,22 @@ int		get_next_line(const int fd, char **line)
 		printf("[final line = %s]\n", line[0]);
 		return (1);
 	}
+	//str = malloc(sizeof(char *) * (BUFF_SIZE + 1));
 	while ((rd = read(fd, buf, BUFF_SIZE)) != 0)
 	{
+		str = ft_strdup(buf);
+		str[BUFF_SIZE] = '\0';
 		i = 0;
 		while (i < BUFF_SIZE && buf[i - 1] != '\n') //care segfault
 			i++;
 		size += i;
-		*line = concatenate(*line, buf, size);
+		*line = concatenate(*line, str, size);
 		if (ft_strchr(buf, '\n') != 0)
-		{
-		str = buf;
 			break;
-		}
 	}
-	str[BUFF_SIZE] = '\0';
 	str = ft_strchr(str, '\n');
 	str++;
+	//printf("[remaining = %s]\n", str);
 	printf("[final line = %s]\n", *line);
 	return (1);
 }
