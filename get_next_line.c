@@ -29,6 +29,28 @@ char	*concatenate(char *str, char *buf, unsigned long size)
 	return (tmp);
 }
 
+unsigned long	remain(char **line, char *str,  unsigned long size)
+{
+	int		i;
+
+	i = 0;
+	if (str != NULL)
+	{
+		*line = concatenate(str, NULL, ft_strlen(str));
+		size = ft_strlen(str);
+	}
+	if (str != NULL && ft_strchr(str, '\n') != 0)
+	{
+		while (str[i] != '\n')
+		{
+			line[0][i] = str[i];
+			i++;
+		}
+		line[0][i] = '\0';
+	}
+	return (size);
+}
+
 // line is the string we read, minus the terminating \n
 int		get_next_line(const int fd, char **line)
 {
@@ -42,41 +64,30 @@ int		get_next_line(const int fd, char **line)
 	i = 0;
 	if (BUFF_SIZE < 1)
 		return (-1);
-	if (str != NULL)
+	size = remain(line, str, size);
+	//if (str != NULL && ft_strchr(str, '\n') != 0)
+	//{
+		//str = ft_strchr(str, '\n');
+		//str++;
+		//return (1);
+	//}
+	if ((str != NULL && ft_strchr(str, '\n') == 0) || str == NULL)
 	{
-		*line = concatenate(str, NULL, ft_strlen(str));
-		size = ft_strlen(str);
-	}
-	if (str != NULL && ft_strchr(str, '\n') != '\0')//
-	{
-		while (str[i] != '\n')
+		while ((rd = read(fd, buf, BUFF_SIZE)) != 0)
 		{
-			line[0][i] = str[i];
-			i++;
+			str = ft_strdup(buf);
+			str[BUFF_SIZE] = '\0';
+			i = 0;
+			while (i < BUFF_SIZE && buf[i - 1] != '\n') //care segfault
+				i++;
+			size += i;
+			*line = concatenate(*line, str, size);
+			if (ft_strchr(buf, '\n') != 0)
+				break;
 		}
-		line[0][i] = '\0';
-		str = ft_strchr(str, '\n');
-		str++;
-		printf("[final line = %s]\n", line[0]);
-		return (1);
-	}
-	//str = malloc(sizeof(char *) * (BUFF_SIZE + 1));
-	while ((rd = read(fd, buf, BUFF_SIZE)) != 0)
-	{
-		str = ft_strdup(buf);
-		str[BUFF_SIZE] = '\0';
-		i = 0;
-		while (i < BUFF_SIZE && buf[i - 1] != '\n') //care segfault
-			i++;
-		size += i;
-		*line = concatenate(*line, str, size);
-		if (ft_strchr(buf, '\n') != 0)
-			break;
 	}
 	str = ft_strchr(str, '\n');
 	str++;
-	//printf("[remaining = %s]\n", str);
-	printf("[final line = %s]\n", *line);
 	return (1);
 }
 
@@ -91,8 +102,12 @@ int		main(int argc, char **argv)
 	if ((fd = open(argv[1], O_RDONLY)) == -1)
 		return (0);
 	get_next_line(fd, line);
+		printf("[final line = %s]\n", *line);
 	get_next_line(fd, line);
+		printf("[final line = %s]\n", *line);
 	get_next_line(fd, line);
+		printf("[final line = %s]\n", *line);
 	get_next_line(fd, line);
+		printf("[final line = %s]\n", *line);
 	return (0);
 }
