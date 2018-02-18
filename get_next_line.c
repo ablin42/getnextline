@@ -1,99 +1,112 @@
 #include "get_next_line.h"
 #include <stdio.h>
 
-
-char	*concatenate(char *str, char *buf, unsigned long size)
+char	*concatenate(char *line, char *buf, int size, char *tmp)
 {
-	char	*tmp;
-	unsigned long	i;
-	unsigned long	j;
+	size_t	i;
+	size_t	j;
 
 	i = 0;
 	j = 0;
-	tmp = malloc(sizeof(char *) * size);
-	if (str != NULL)
+	if (line != NULL)
 	{
-		while (i < ft_strlen(str))
+		while (i < ft_strlen(line))
 		{
-			tmp[i] = str[i];
+			tmp[i] = line[i];
 			i++;
 		}
 	}
-	//printf("[%s]{%s}(%s)\n", tmp, str, buf);
-	while (i < size && buf[j] != '\n')
+	while (i < (size_t)size && buf[j] != '\n')
 	{
 		tmp[i] = buf[j];
 		i++;
 		j++;
 	}
+	tmp[i] = '\0';
 	return (tmp);
 }
 
-unsigned long	remain(char **line, char *str,  unsigned long size)
+unsigned long	use_remain(char **line, char *remain)
 {
 	int		i;
+	int		size;
+	char	*tmp;
 
 	i = 0;
-	if (str != NULL)
+	size = 0;
+	if (remain != NULL)
 	{
-		*line = concatenate(str, NULL, ft_strlen(str));
-		size = ft_strlen(str);
+		size = ft_strlen(remain);
+		tmp = malloc(sizeof(char *) * size);
+		*line = concatenate(remain, NULL, ft_strlen(remain), tmp);
+		free(tmp);
 	}
-	if (str != NULL && ft_strchr(str, '\n') != 0)
+	if (remain != NULL && ft_strchr(remain, '\n') != 0)
 	{
-		while (str[i] != '\n')
+		while (remain[i] != '\n')
 		{
-			line[0][i] = str[i];
+			line[0][i] = remain[i];
 			i++;
 		}
 		line[0][i] = '\0';
+		size = -1;
 	}
 	return (size);
+}
+
+t_gnl	treat(t_gnl gnl, char **line, char *remain, int fd)
+{
+	char *tmp;
+
+	if ((remain != NULL && ft_strchr(remain, '\n') == 0) || remain == NULL)
+	while ((gnl.rd = read(fd, gnl.buf, BUFF_SIZE)) > 0)
+	{
+		gnl.i = 0;
+		gnl.buf[gnl.rd] = '\0';
+		while (gnl.i < gnl.rd && gnl.buf[gnl.i - 1] != '\n') // segfault
+			gnl.i++;
+		gnl.size += gnl.i;
+		tmp = malloc(sizeof(char *) * gnl.size);
+		*line = concatenate(*line, gnl.buf, gnl.size, tmp);
+		free(tmp);
+		if (ft_strchr(gnl.buf, '\n') != 0 || gnl.rd < BUFF_SIZE)
+			break;
+	}
+	return (gnl);
 }
 
 // line is the string we read, minus the terminating \n
 int		get_next_line(const int fd, char **line)
 {
-	char	buf[BUFF_SIZE];
-	static	char	*str;
-	int		rd;
-	unsigned long		size;
-	int		i;
+	static	char	*remain;
+	t_gnl			gnl;
 
-	size = 0;
-	i = 0;
-	if (BUFF_SIZE < 1)
+	ft_strclr(gnl.buf);
+	if (BUFF_SIZE < 1 || fd < 0)//line == null
 		return (-1);
-	size = remain(line, str, size);
-	//if (str != NULL && ft_strchr(str, '\n') != 0)
-	//{
-		//str = ft_strchr(str, '\n');
-		//str++;
-		//return (1);
-	//}
-	if ((str != NULL && ft_strchr(str, '\n') == 0) || str == NULL)
+	gnl.size = use_remain(line, remain);
+	gnl = treat(gnl, line, remain, fd);
+	if (gnl.rd < 0)
+		return (-1);
+	if (ft_strcmp(*line, "") == 0 || (remain == NULL && gnl.rd == 0))//gnl.rd == 0
+		return (0);
+	if (gnl.size != -1)
+		remain = ft_strdup(gnl.buf);
+	if (ft_strchr(remain, '\n') != 0)
 	{
-		while ((rd = read(fd, buf, BUFF_SIZE)) != 0)
-		{
-			str = ft_strdup(buf);
-			str[BUFF_SIZE] = '\0';
-			i = 0;
-			while (i < BUFF_SIZE && buf[i - 1] != '\n') //care segfault
-				i++;
-			size += i;
-			*line = concatenate(*line, str, size);
-			if (ft_strchr(buf, '\n') != 0)
-				break;
-		}
+		remain = ft_strchr(remain, '\n');//probablement need \0
+		remain++;
 	}
-	str = ft_strchr(str, '\n');
-	str++;
+	else
+		remain = NULL;
 	return (1);
 }
 
 int		main(int argc, char **argv)
 {
 	int		fd;
+	int		fd2;
+	int		ret;
 	char	**line;
 
 	(void)argc;
@@ -101,13 +114,26 @@ int		main(int argc, char **argv)
 	*line = NULL;
 	if ((fd = open(argv[1], O_RDONLY)) == -1)
 		return (0);
-	get_next_line(fd, line);
-		printf("[final line = %s]\n", *line);
-	get_next_line(fd, line);
-		printf("[final line = %s]\n", *line);
-	get_next_line(fd, line);
-		printf("[final line = %s]\n", *line);
-	get_next_line(fd, line);
-		printf("[final line = %s]\n", *line);
+	if ((fd2 = open(argv[2], O_RDONLY)) == -1)
+		return (0);
+	ret = get_next_line(fd, line);
+	printf("%d[1final line = %s]\n",ret, *line);
+	ret = get_next_line(fd2, line);
+	printf("%d[2final line = %s]\n",ret, *line);
+	ret = get_next_line(fd, line);
+	printf("%d[1final line = %s]\n",ret, *line);
+	ret = get_next_line(fd2, line);
+	printf("%d[2final line = %s]\n",ret, *line);
+	ret = get_next_line(fd, line);
+	printf("%d[1final line = %s]\n",ret, *line);
+	ret = get_next_line(fd2, line);
+	printf("%d[2final line = %s]\n",ret, *line);
+	
+/*	while ((ret = get_next_line(fd, line)) > 0)
+	{
+		printf("%d[final line = %s]\n",ret, *line);
+		if (ret == 0)
+			break;
+	}*/
 	return (0);
 }

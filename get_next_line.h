@@ -8,5 +8,14 @@
 
 # define BUFF_SIZE 22
 
+typedef	struct	s_gnl
+{
+	char	buf[BUFF_SIZE + 1];
+	int		rd;
+	int		size;
+	int		i;
+
+}				t_gnl;
+
 int		get_next_line(const int fd, char **line);
 #endif
