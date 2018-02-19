@@ -4,14 +4,14 @@
 # include <sys/stat.h>
 # include <fcntl.h>
 # include <unistd.h>
-# include "Libft/libft.h"
+# include "../srcs/Libft/libft.h"
 
 # define BUFF_SIZE 22
 
 typedef	struct	s_gnl
 {
-	char	buf[BUFF_SIZE + 1];
 	char	*remain;
+	char	buf[BUFF_SIZE + 1];
 	int		rd;
 	int		size;
 	int		i;
