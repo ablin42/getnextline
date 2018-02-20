@@ -6,12 +6,13 @@
 # include <unistd.h>
 # include "Libft/libft.h"
 
-# define BUFF_SIZE 22
+# define BUFF_SIZE 60
 
 typedef	struct	s_gnl
 {
 	char	buf[BUFF_SIZE + 1];
 	char	*remain;
+	char	*tmp;
 	int		rd;
 	int		size;
 	int		i;

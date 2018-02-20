@@ -8,6 +8,7 @@ char	*concatenate(char *line, char *buf, int size, char *tmp)
 
 	i = 0;
 	j = 0;
+
 	if (line != NULL)
 	{
 		while (i < ft_strlen(line))
@@ -66,7 +67,7 @@ t_gnl	treat(t_gnl gnl, char **line, char *remain, int fd)
 		while (gnl.i < gnl.rd && gnl.buf[gnl.i - 1] != '\n') // segfault
 			gnl.i++;
 		gnl.size += gnl.i;
-		tmp = malloc(sizeof(char *) * gnl.size);
+		tmp = malloc(sizeof(char *) * gnl.size + 1);
 		*line = concatenate(*line, gnl.buf, gnl.size, tmp);
 		free(tmp);
 		if (ft_strchr(gnl.buf, '\n') != 0 || gnl.rd < BUFF_SIZE)
@@ -115,22 +116,7 @@ int		main(int argc, char **argv)
 	*line = NULL;
 	if ((fd = open(argv[1], O_RDONLY)) == -1)
 		return (0);
-	if ((fd2 = open(argv[2], O_RDONLY)) == -1)
-		return (0);
-	ret = get_next_line(fd, line);
-	printf("%d[1final line = %s]\n",ret, *line);
-	ret = get_next_line(fd2, line);
-	printf("%d[2final line = %s]\n",ret, *line);
-	ret = get_next_line(fd, line);
-	printf("%d[1final line = %s]\n",ret, *line);
-	ret = get_next_line(fd2, line);
-	printf("%d[2final line = %s]\n",ret, *line);
-	ret = get_next_line(fd, line);
-	printf("%d[1final line = %s]\n",ret, *line);
-	ret = get_next_line(fd2, line);
-	printf("%d[2final line = %s]\n",ret, *line);
-	
-	while ((ret = get_next_line(fd, line)) > 0)
+	while ((ret = get_next_line(fd, line)) >= 0)
 	{
 		printf("%d[final line = %s]\n",ret, *line);
 		if (ret == 0)
