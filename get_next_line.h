@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ablin <marvin@42.fr>                       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/02/21 02:36:29 by ablin             #+#    #+#             */
+/*   Updated: 2018/02/21 02:45:29 by ablin            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef __GET_NEXT_LINE_H
 # define __GET_NEXT_LINE_H
 # include <sys/types.h>
@@ -6,7 +18,7 @@
 # include <unistd.h>
 # include "Libft/libft.h"
 
-# define BUFF_SIZE 60
+# define BUFF_SIZE 22
 
 typedef	struct	s_gnl
 {
