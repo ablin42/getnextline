@@ -18,17 +18,16 @@
 # include <unistd.h>
 # include "Libft/libft.h"
 
-# define BUFF_SIZE 22
+# define BUFF_SIZE 35
 
 typedef	struct	s_gnl
 {
 	char	buf[BUFF_SIZE + 1];
 	char	*remain;
-	char	*tmp;
+	char	*tmpline;
 	int		rd;
 	int		size;
 	int		i;
-
 }				t_gnl;
 
 int		get_next_line(const int fd, char **line);
