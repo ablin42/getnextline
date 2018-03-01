@@ -15,7 +15,7 @@
 
 char	*concatenate(t_gnl gnl, char *str)
 {
-	int		i;
+	int			i;
 	size_t		j;
 	char		*tmp;
 
@@ -27,73 +27,45 @@ char	*concatenate(t_gnl gnl, char *str)
 		tmp = ft_strdup(str);
 		ft_strdel(&str);
 	}
-	str = ft_strnew(gnl.size);////
-	j = ft_strlen(gnl.remain);
-	while (gnl.remain[i] != '\0' && i < (int)j) // remain[i] != '\n' // '\0'
-	{
-		str[i] = gnl.remain[i];
-		i++;
-	//	ft_putstr(ft_itoa(i));
-	}
-	j = 0;
-	while (tmp != NULL && tmp[i] != '\0')
-	{
-		str[i] = tmp[i];//
-		i++;
-		//j++;
-	}
-//	j = 0;
+	str = ft_strnew(gnl.size);
+	if (gnl.remain != NULL)
+		str = ft_strcat(str, gnl.remain);
+	if (tmp != NULL)
+		str = ft_strcat(str, tmp);
+	i = ft_strlen(str);
 	while (i < gnl.size && gnl.buf[j] != '\n')
 		str[i++] = gnl.buf[j++];
 	str[i] = '\0';
-	if (tmp != NULL) /////jen suis la xddd
-		free(tmp);
+	if (tmp != NULL)
+		ft_strdel(&tmp);
 	return (str);
 }
 
-t_gnl	treat(t_gnl gnl, int fd)//
+t_gnl	treat(t_gnl gnl, int fd)
 {
-	//char	*str;
-
-	gnl.tmpline = NULL;
 	gnl.i = 0;
 	gnl.size = ft_strlen(gnl.remain);
-	/*if (gnl.remain != NULL)
-	{
-		gnl.size = ft_strlen(gnl.remain);
-		tmp2 = ft_strnew(gnl.size);
-		*line = concatenate(gnl.remain, NULL, ft_strlen(gnl.remain), tmp2);
-		printf("[final line = %s]\n", *line);
-		free(tmp2);
-	}*/
-	
 	if (gnl.remain != NULL && ft_strchr(gnl.remain, '\n') != 0)
 	{
 		while (gnl.remain[gnl.i] != '\n')
 			gnl.i++;
 		gnl.tmpline = ft_strnew(gnl.i);
-		gnl.i = 0;
-		while (gnl.remain[gnl.i] != '\n')
-		{
-			gnl.tmpline[gnl.i] = gnl.remain[gnl.i];
-			gnl.i++;
-		}
-		gnl.size = -1;
+		ft_strncpy(gnl.tmpline, gnl.remain, gnl.i);
 		return (gnl);
 	}
-
-		while ((gnl.rd = read(fd, gnl.buf, BUFF_SIZE)) >= 0)
-		{
-			gnl.i = 0;
-			gnl.buf[gnl.rd] = '\0';
-			while (gnl.i < gnl.rd && gnl.buf[gnl.i - 1] != '\n')
-				gnl.i++;
-			gnl.size += gnl.i;
-			gnl.tmpline = concatenate(gnl, gnl.tmpline);
-			ft_strclr(gnl.remain);
-			if (ft_strchr(gnl.buf, '\n') != 0 || gnl.rd < BUFF_SIZE)
-				break ;
-		}
+	while ((gnl.rd = read(fd, gnl.buf, BUFF_SIZE)) >= 0)
+	{
+		gnl.i = 0;
+		gnl.buf[gnl.rd] = '\0';
+		while (gnl.i < gnl.rd && gnl.buf[gnl.i - 1] != '\n')
+			gnl.i++;
+		gnl.size += gnl.i;
+		gnl.tmpline = concatenate(gnl, gnl.tmpline);
+		ft_strclr(gnl.remain);
+		if (ft_strchr(gnl.buf, '\n') != 0 || gnl.rd < BUFF_SIZE)
+			break ;
+	}
+	gnl.remain = ft_strcpy(gnl.remain, gnl.buf);
 	return (gnl);
 }
 
@@ -101,26 +73,20 @@ int		get_next_line(const int fd, char **line)
 {
 	static	t_gnl	gnl;
 
-//	gnl.rd = 0;
 	if (BUFF_SIZE < 1 || fd < 0 || line == NULL)
 		return (-1);
+	gnl.tmpline = NULL;
 	if (gnl.remain == NULL)
-		gnl.remain = ft_strnew(BUFF_SIZE);//allouer en static comme le buffer?
-	ft_memset(gnl.buf, '\0', BUFF_SIZE);
-	gnl = treat(gnl, fd); //*line
-	if (gnl.tmpline != NULL)//
+		gnl.remain = ft_strnew(BUFF_SIZE);
+	gnl = treat(gnl, fd);
+	if (gnl.tmpline != NULL)
 		*line = ft_strdup(gnl.tmpline);
 	if (gnl.rd < 0)
 		return (-1);
 	if ((ft_strcmp(gnl.remain, "") == 0 && gnl.size == 0))
 		return (0);
-	if (gnl.size != -1)
-		gnl.remain = ft_strcpy(gnl.remain, gnl.buf);
-	if (ft_strchr(gnl.remain, '\n') != 0)
-	{
-		gnl.remain = ft_strchr(gnl.remain, '\n');
+	if ((gnl.remain = ft_strchr(gnl.remain, '\n')) != 0)
 		gnl.remain++;
-	}
 	else
 		gnl.remain = NULL;
 	return (1);

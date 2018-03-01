@@ -22,8 +22,8 @@
 
 typedef	struct	s_gnl
 {
-	char	buf[BUFF_SIZE + 1];
 	char	*remain;
+	char	buf[BUFF_SIZE + 1];
 	char	*tmpline;
 	int		rd;
 	int		size;
