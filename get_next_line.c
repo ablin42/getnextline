@@ -41,7 +41,7 @@ char	*concatenate(t_gnl gnl, char *str)
 	return (str);
 }
 
-t_gnl	treat(t_gnl gnl, int fd)
+t_gnl	read_line(t_gnl gnl, int fd)
 {
 	gnl.i = 0;
 	gnl.size = ft_strlen(gnl.remain);
@@ -73,25 +73,34 @@ int		get_next_line(const int fd, char **line)
 {
 	static	t_gnl	gnl;
 
+	//printf("open[%s][%s]\n", *line, gnl.remain);
 	if (BUFF_SIZE < 1 || fd < 0 || line == NULL)
 		return (-1);
 	gnl.tmpline = NULL;
 	if (gnl.remain == NULL)
 		gnl.remain = ft_strnew(BUFF_SIZE);
-	gnl = treat(gnl, fd);
+	gnl = read_line(gnl, fd);
 	if (gnl.tmpline != NULL)
 		*line = ft_strdup(gnl.tmpline);
 	if (gnl.rd < 0)
 		return (-1);
+	if (ft_strcmp(*line, "") == 0)
+		*line = NULL;
 	if ((ft_strcmp(gnl.remain, "") == 0 && gnl.size == 0))
 		return (0);
 	if ((gnl.remain = ft_strchr(gnl.remain, '\n')) != 0)
+	{
+	//	printf("XXXX\n");
 		gnl.remain++;
+		if (*gnl.remain == '\n')
+			gnl.remain++;
+		}
 	else
 		gnl.remain = NULL;
+//	printf("close[%s][%s]\n", *line, gnl.remain);
 	return (1);
 }
-/*
+
 int		main(int argc, char **argv)
 {
 	int		fd;
@@ -105,9 +114,9 @@ int		main(int argc, char **argv)
 		return (0);
 	while ((ret = get_next_line(fd, &line)) >= 0)
 	{
-		printf("%s\n", line);
+		printf("%d[%s]\n", ret, line);
 		if (ret == 0)
 			break;
 	}
 	return (0);
-}*/
+}
