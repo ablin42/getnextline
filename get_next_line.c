@@ -100,7 +100,7 @@ int		get_next_line(const int fd, char **line)
 //	printf("close[%s][%s]\n", *line, gnl.remain);
 	return (1);
 }
-
+/*
 int		main(int argc, char **argv)
 {
 	int		fd;
@@ -119,4 +119,4 @@ int		main(int argc, char **argv)
 			break;
 	}
 	return (0);
-}
+}*/
