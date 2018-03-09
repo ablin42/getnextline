@@ -6,12 +6,13 @@
 /*   By: ablin <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/21 02:36:20 by ablin             #+#    #+#             */
-/*   Updated: 2018/02/21 02:50:36 by ablin            ###   ########.fr       */
+/*   Updated: 2018/03/09 23:03:36 by ablin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdio.h>
+#include <string.h>
 
 char	*concatenate(t_gnl gnl, char *str)
 {
@@ -19,6 +20,7 @@ char	*concatenate(t_gnl gnl, char *str)
 	size_t		j;
 	char		*tmp;
 
+	//printf("[%s]{%s}[%s]\n", gnl.remain, str, gnl.buf);
 	i = 0;
 	j = 0;
 	tmp = NULL;
@@ -73,12 +75,11 @@ int		get_next_line(const int fd, char **line)
 {
 	static	t_gnl	gnl;
 
-	//printf("open[%s][%s]\n", *line, gnl.remain);
 	if (BUFF_SIZE < 1 || fd < 0 || line == NULL)
 		return (-1);
 	gnl.tmpline = NULL;
 	if (gnl.remain == NULL)
-		gnl.remain = ft_strnew(BUFF_SIZE);
+		gnl.remain = ft_strnew(BUFF_SIZE * 2);
 	gnl = read_line(gnl, fd);
 	if (gnl.tmpline != NULL)
 		*line = ft_strdup(gnl.tmpline);
@@ -88,23 +89,20 @@ int		get_next_line(const int fd, char **line)
 		*line = NULL;
 	if ((ft_strcmp(gnl.remain, "") == 0 && gnl.size == 0))
 		return (0);
-	if ((gnl.remain = ft_strchr(gnl.remain, '\n')) != 0)
+	if ((gnl.remain = strchr(gnl.remain, '\n')) != 0)
 	{
-	//	printf("XXXX\n");
 		gnl.remain++;
 		if (*gnl.remain == '\n')
 			gnl.remain++;
-		}
+	}
 	else
 		gnl.remain = NULL;
-//	printf("close[%s][%s]\n", *line, gnl.remain);
 	return (1);
 }
 /*
 int		main(int argc, char **argv)
 {
 	int		fd;
-	//int		fd2;
 	int		ret;
 	char	*line;
 
