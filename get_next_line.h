@@ -20,7 +20,7 @@
 
 # define BUFF_SIZE 10
 
-typedef	struct	s_gnl
+typedef	struct	s_get
 {
 	char	buf[BUFF_SIZE + 1];
 	char	*remain;
@@ -28,7 +28,22 @@ typedef	struct	s_gnl
 	int		rd;
 	int		size;
 	int		i;
+}				t_get;
+
+typedef	struct	s_gnl
+{
+	char	buf[BUFF_SIZE + 1];
+	int		rd;
+	int		size;
+	int		i;
 }				t_gnl;
+
+typedef	struct	s_lst
+{
+	int				fd;
+	char			*str;
+	struct	s_lst	*next;
+}				t_lst;
 
 t_gnl			read_line(t_gnl gnl, int fd);
 char			*concatenate(t_gnl gnl, char *str);
