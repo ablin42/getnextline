@@ -42,10 +42,15 @@ typedef	struct	s_lst
 {
 	int				fd;
 	char			*str;
+	struct	s_lst	*start;
 	struct	s_lst	*next;
 }				t_lst;
 
 t_gnl			read_line(t_gnl gnl, int fd);
 char			*concatenate(t_gnl gnl, char *str);
 int				get_next_line(const int fd, char **line);
+char			*ft_strjoinfree(const char *s1, const char *s2);
+t_lst			*fetch_fd(t_lst **lst, int fd);
+t_lst			*add_list(t_lst *lst, int fd);
+char			*save_remain(char *str);
 #endif
