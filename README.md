@@ -6,7 +6,8 @@ Whether it's from a file, the standard input, or even from a network connection 
 > -File descriptors 
 > -Buffering 
 > -Basic parsing 
+
 ### Skills
-> -Rigor 
-> -Imperative programming 
-> -Algorithms & AI 
+> - Imperative programming
+> - Algorithms & AI
+> - Rigor
