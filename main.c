@@ -11,16 +11,17 @@ int		main(int argc, char **argv)
 	int		fd;
 	int		ret;
 	char	*line;
-	int		i;
+//	int		i;
 
-	i = 0;
+	system("openssl rand -base64 $((250000))  > sandbox/one_big_fat_line.txt");
+//	i = 0;
 	(void)argc;
 	if ((fd = open(argv[1], O_RDONLY)) == -1)
 		return (0);
 	while ((ret = get_next_line(fd, &line)) >= 0)
 	{
-		printf("%d[%s]%d\n", ret, line, i);
-		i++;
+//		printf("%d[%s]%d\n", ret, line, i);
+//		i++;
 		if (ret == 0)
 			break;
 	}

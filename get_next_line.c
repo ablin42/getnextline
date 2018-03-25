@@ -90,6 +90,7 @@ int			get_next_line(const int fd, char **line)
 		return (-1);
 	if ((lst = fetch_fd(&lst, fd)) == NULL)
 		return (-1);
+	if ((lst->str != NULL && ft_strchr(lst->str, '\n') == 0 ) || lst->str == NULL)
 	while ((gnl.rd = read(fd, gnl.buf, BUFF_SIZE)) >= 0)
 	{
 		gnl.buf[gnl.rd] = '\0';
