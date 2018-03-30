@@ -13,14 +13,14 @@ int		main(int argc, char **argv)
 	char	*line;
 //	int		i;
 
-	system("openssl rand -base64 $((250000))  > sandbox/one_big_fat_line.txt");
+//	system("openssl rand -base64 $((250000))  > sandbox/one_big_fat_line.txt");
 //	i = 0;
 	(void)argc;
 	if ((fd = open(argv[1], O_RDONLY)) == -1)
 		return (0);
 	while ((ret = get_next_line(fd, &line)) >= 0)
 	{
-//		printf("%d[%s]%d\n", ret, line, i);
+		printf("%d[%s]\n", ret, line);
 //		i++;
 		if (ret == 0)
 			break;
